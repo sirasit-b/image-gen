@@ -4,3 +4,5 @@ outputs
 images/
 .impeccable
 !.impeccable/config.json
+demo/generated/
+demo/client/dist/

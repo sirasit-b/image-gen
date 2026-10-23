@@ -1,0 +1,17 @@
+{
+  "name": "northline-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "server": "node server/index.js",
+    "client": "npm --prefix client run dev",
+    "dev": "node server/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "openai": "^4.68.0"
+  }
+}
