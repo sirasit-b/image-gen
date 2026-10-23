@@ -8,6 +8,34 @@ const el = (tag, cls, text) => {
   return node;
 };
 
+// One stroke weight, one corner language — drawn here rather than borrowed from a font.
+const ICONS = {
+  spark: 'M12 3.5l1.9 4.9 4.9 1.9-4.9 1.9L12 17.1l-1.9-4.9-4.9-1.9 4.9-1.9zM18.5 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z',
+  download: 'M12 4v10m0 0l-3.8-3.8M12 14l3.8-3.8M4.5 17.5v1.2a1.8 1.8 0 001.8 1.8h11.4a1.8 1.8 0 001.8-1.8v-1.2',
+  archive: 'M3.5 7.2h17v11.3a1.8 1.8 0 01-1.8 1.8H5.3a1.8 1.8 0 01-1.8-1.8zM3.5 7.2l1.6-3.1h13.8l1.6 3.1M10 11.5h4',
+  frame: 'M4.5 4.5h15v15h-15zM4.5 12h15M12 4.5v15',
+};
+
+function icon(name) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('aria-hidden', 'true');
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', ICONS[name]);
+  path.setAttribute('stroke', 'currentColor');
+  path.setAttribute('stroke-width', '1.6');
+  path.setAttribute('stroke-linecap', 'round');
+  path.setAttribute('stroke-linejoin', 'round');
+  svg.append(path);
+  return svg;
+}
+
+function labelled(node, name, text) {
+  node.append(icon(name), el('span', null, text));
+  return node;
+}
+
 // assets.get(`${useCaseId}:${assetName}`) -> { dataUrl, img, alpha, label, name }
 const assets = new Map();
 const key = (useCaseId, name) => `${useCaseId}:${name}`;
@@ -146,8 +174,8 @@ function assetCard(useCase, asset, refresh) {
   promptBox.addEventListener('input', () => { asset.prompt = promptBox.value; });
 
   const row = el('div', 'card-actions');
-  const gen = el('button', 'btn small', 'สร้าง');
-  const dl = el('a', 'btn small ghost', 'PNG');
+  const gen = labelled(el('button', 'btn small'), 'spark', 'สร้างภาพ');
+  const dl = labelled(el('a', 'btn small ghost'), 'download', 'PNG');
   dl.download = `${asset.name}.png`;
   row.append(gen, dl);
 
@@ -156,8 +184,12 @@ function assetCard(useCase, asset, refresh) {
   const render = () => {
     const stored = assets.get(key(useCase.id, asset.name));
     thumb.innerHTML = '';
+    thumb.classList.remove('working');
     if (!stored) {
-      badge.textContent = 'ยังไม่สร้าง';
+      const empty = el('div', 'empty');
+      empty.append(icon('frame'), el('span', null, 'ยังไม่ได้สร้าง'));
+      thumb.append(empty);
+      badge.textContent = 'ว่าง';
       badge.className = 'badge';
       dl.style.display = 'none';
       return;
@@ -175,13 +207,15 @@ function assetCard(useCase, asset, refresh) {
 
   gen.addEventListener('click', async () => {
     gen.disabled = true;
-    badge.textContent = 'กำลังสร้าง...';
-    badge.className = 'badge';
+    badge.textContent = 'กำลังสร้าง';
+    badge.className = 'badge working';
+    thumb.classList.add('working');
     try {
       await generateAsset(useCase, asset);
       render();
       refresh();
     } catch (err) {
+      thumb.classList.remove('working');
       badge.textContent = err.message;
       badge.className = 'badge bad';
     } finally {
@@ -322,7 +356,7 @@ function merchComposer(useCase) {
   const stage = el('div', 'stage merch');
   const controls = el('div', 'composer-controls');
   const canvas = el('canvas', 'mockup-canvas');
-  const dl = el('a', 'btn small ghost', 'ดาวน์โหลด mockup');
+  const dl = labelled(el('a', 'btn small ghost'), 'download', 'ดาวน์โหลด mockup');
   dl.download = 'merchandise-print-mockups.png';
   controls.append(dl);
 
@@ -465,8 +499,8 @@ function useCaseView(useCase) {
   if (useCase.note) view.append(el('div', 'note', `หมายเหตุ: ${useCase.note}`));
 
   const bar = el('div', 'bar');
-  const genAll = el('button', 'btn', `สร้างทั้งชุด (${useCase.assets.length} ภาพ)`);
-  const zip = el('button', 'btn ghost', 'ดาวน์โหลดทั้งชุด (.zip)');
+  const genAll = labelled(el('button', 'btn'), 'spark', `สร้างทั้งชุด · ${useCase.assets.length} ภาพ`);
+  const zip = labelled(el('button', 'btn ghost'), 'archive', 'ดาวน์โหลด .zip');
   const status = el('span', 'status');
   bar.append(genAll, zip, el('span', 'meta', `ขนาด ${useCase.size}`), status);
 

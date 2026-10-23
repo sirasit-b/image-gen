@@ -3,3 +3,4 @@ node_modules
 outputs
 images/
 .impeccable
+!.impeccable/config.json
