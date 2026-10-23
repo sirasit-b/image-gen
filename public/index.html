@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Transparent Image Assets</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="wrap">
+  <h1>Transparent Image Assets</h1>
+  <p class="sub">
+    สร้าง PNG พื้นหลังโปร่งใส ตรวจ alpha channel แล้วประกอบใช้งานจริง
+    ตามทุก use case ของ OpenAI cookbook — e-commerce ตามฤดูกาล, สไลด์องค์กร, asset สำหรับเทมเพลต และ print-on-demand
+  </p>
+
+  <div class="settings">
+    <label class="field">
+      <span>โมเดล</span>
+      <select id="model">
+        <option value="gpt-image-2.5-flare">gpt-image-2.5-flare</option>
+        <option value="gpt-image-2.5-sunburst">gpt-image-2.5-sunburst (คุณภาพสูงสุด)</option>
+        <option value="gpt-image-1">gpt-image-1</option>
+      </select>
+    </label>
+    <label class="field">
+      <span>คุณภาพ</span>
+      <select id="quality">
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+      </select>
+    </label>
+    <label class="toggle">
+      <input type="checkbox" id="transparent" checked />
+      <span>พื้นหลังโปร่งใส (background=&quot;transparent&quot;)</span>
+    </label>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+  <div id="views"></div>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
